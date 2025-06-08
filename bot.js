@@ -1,5 +1,5 @@
 const fs = require('fs');
-const LOG_CHANNEL_ID = 'process.env._LOG_CHANNEL_ID';
+const LOG_CHANNEL_ID = process.env._LOG_CHANNEL_ID;
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({
   intents: [
@@ -8,8 +8,8 @@ const client = new Client({
   ]
 });
 
-const TOKEN = 'process.env.TOKEN';
-const GUILD_ID = 'process.env.LOG_CHANNEL_ID';
+const TOKEN = process.env.TOKEN;
+const GUILD_ID = process.env.LOG_CHANNEL_ID;
 const TIME_LIMIT_MS = 8 * 60 * 60 * 1000; // 8 hours
 
 let joinTimes = {};
