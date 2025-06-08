@@ -1,18 +1,25 @@
 const fs = require('fs');
-const LOG_CHANNEL_ID = process.env._LOG_CHANNEL_ID;
 const { Client, GatewayIntentBits } = require('discord.js');
+
+// Load from environment
+const TOKEN = process.env.TOKEN;
+const GUILD_ID = process.env.GUILD_ID;
+const LOG_CHANNEL_ID = process.env.LOG_CHANNEL_ID;
+
+const TIME_LIMIT_MINUTES = parseInt(process.env.TIME_LIMIT_MINUTES || '480'); // default 8 hours
+const CHECK_INTERVAL_MINUTES = parseInt(process.env.CHECK_INTERVAL_MINUTES || '120'); // default 2 hours
+
+const TIME_LIMIT_MS = TIME_LIMIT_MINUTES * 60 * 1000;
+const CHECK_INTERVAL_MS = CHECK_INTERVAL_MINUTES * 60 * 1000;
+
+let joinTimes = {};
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
   ]
 });
-
-const TOKEN = process.env.TOKEN;
-const GUILD_ID = process.env.LOG_CHANNEL_ID;
-const TIME_LIMIT_MS = 8 * 60 * 60 * 1000; // 8 hours
-
-let joinTimes = {};
 
 function loadJoinTimes() {
   if (fs.existsSync('./data.json')) {
@@ -26,6 +33,10 @@ function saveJoinTimes() {
 
 client.on('ready', () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
+  console.log(`📌 GUILD_ID: ${GUILD_ID}`);
+  console.log(`📌 LOG_CHANNEL_ID: ${LOG_CHANNEL_ID}`);
+  console.log(`🕒 TIME_LIMIT: ${TIME_LIMIT_MINUTES} minutes`);
+  console.log(`🔁 CHECK_INTERVAL: ${CHECK_INTERVAL_MINUTES} minutes`);
   loadJoinTimes();
 });
 
@@ -57,13 +68,13 @@ setInterval(async () => {
         console.log(`⛔ Kicked ${member.user.tag}`);
 
         if (channel && channel.isTextBased()) {
-          channel.send(`⛔ **${member.user.tag}** was kicked for having no roles after the timeout.`);
+          channel.send(`⛔ **${member.user.tag}** was kicked for having no roles after ${TIME_LIMIT_MINUTES} minutes.`);
         }
       } catch (err) {
         console.error(`Failed to kick ${member.user.tag}:`, err.message);
       }
     }
   }
-}, 2 * 60 * 60 * 1000); // Every 2 hours
-client.login(TOKEN);
+}, CHECK_INTERVAL_MS);
 
+client.login(TOKEN);
