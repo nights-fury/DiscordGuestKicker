@@ -1,0 +1,3 @@
+This is a discord bot that'll kick people who do not have roles after a set amount of time. The variables are linked to railway.com, which is the website i run this code.
+Feel free to copy and use however you like. Make sure to not upload your bot keys/discord server ID's into the bot directly if you are going to use a website like i did.
+You can also run this locally by downloading node.js and prerequistes and cd to the folder (use command line and not powershell on win 11), then type "node bot.js". For this to work you of course need to adjust the bot.js in notepad and add your own information to relevant sections.
